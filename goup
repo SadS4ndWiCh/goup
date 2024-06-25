@@ -1,0 +1,34 @@
+#!/usr/bin/bash
+
+VERSION=$1
+FILENAME="go$VERSION.linux-amd64.tar.gz"
+FILE_PATH="$(pwd)/$FILENAME"
+
+echo "[*] Downloading GO $VERSION"
+wget "https://go.dev/dl/$FILENAME"
+
+if [[ ! $? -eq 0 ]]; then
+    echo "[-] Failed to download GO $VERSION tar file"
+    exit
+fi
+
+echo "[*] Downloaded file"
+
+if [[ ! -f $FILE_PATH ]]; then
+    echo "[-] Tar file not found. Extract it manually with:"
+    echo "tar -C /usr/local/go -xzf /path/to/$FILENAME"
+    exit
+fi
+
+if [[ -d "/usr/local/go" ]]; then
+    echo "[*] Removing previous GO version"
+    sudo rm -fr /usr/local/go
+fi
+
+echo "[*] Extracting new version"
+sudo tar -C /usr/local -xzf $FILENAME
+
+echo "[*] Removing downloaded files"
+rm -fr $FILE_PATH
+
+echo "[+] Successfuly upgraded to GO $VERSION"
